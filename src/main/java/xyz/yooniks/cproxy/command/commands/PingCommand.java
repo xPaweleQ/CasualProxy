@@ -8,7 +8,7 @@ import org.spacehq.packetlib.Client;
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
 import xyz.yooniks.cproxy.command.Command;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.objects.Player;
 
 import java.net.Proxy;

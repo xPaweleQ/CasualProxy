@@ -1,8 +1,8 @@
 package xyz.yooniks.cproxy.command.commands.bots;
 
 import xyz.yooniks.cproxy.command.Command;
-import xyz.yooniks.cproxy.enums.Group;
-import xyz.yooniks.cproxy.enums.MacroType;
+import xyz.yooniks.cproxy.Group;
+import xyz.yooniks.cproxy.types.MacroType;
 import xyz.yooniks.cproxy.managers.MacroManager;
 import xyz.yooniks.cproxy.objects.Macro;
 import xyz.yooniks.cproxy.objects.Player;

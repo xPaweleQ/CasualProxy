@@ -7,7 +7,7 @@ import xyz.yooniks.cproxy.CasualProxy;
 public class ChatUtilities {
 
     public static String fixColor(String text) {
-        return text.replace("&", "§").replace(">>","»")
+        return text.replace("&", "§").replace(">>", "»")
                 .replace("$p", "§8[§2Casual§aProxy§8]");
     }
 

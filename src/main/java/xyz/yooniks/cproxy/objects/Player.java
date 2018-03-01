@@ -6,12 +6,13 @@ import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerPlayerListDataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerTitlePacket;
 import org.spacehq.packetlib.Session;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.managers.ProxyManager;
 import xyz.yooniks.cproxy.objects.player.BotOptions;
 import xyz.yooniks.cproxy.objects.player.Connector;
 import xyz.yooniks.cproxy.objects.player.PlayerOptions;
 import xyz.yooniks.cproxy.utils.ChatUtilities;
+import xyz.yooniks.cproxy.utils.DateUtilities;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -62,25 +63,26 @@ public class Player extends Connector {
             session.send(new ServerPlayerListDataPacket(
                     new TextMessage(ChatUtilities.fixColor("&2Casual&aProxy &7created by &ayooniks\n")),
                     new TextMessage(ChatUtilities.fixColor("\n&7Ostatni pakiet z serwera &8(&7" + (System.currentTimeMillis() - getLastPacketMs()
-                    ) + "ms temu&8):\n&8( &a" + getLastPacket() + "&8 )\n&7Twoj nick: &a" + nick + "\n&7Serwer docelowy: &a" +
+                    ) + "ms temu&8):\n&8( &a" + getLastPacket() + "&8 )\n&7Twoj nick: &a" + nick + "" +
+                            "\n&7Waznosc konta: &a" + DateUtilities.getDate(getExpirationDate()) + "" +
+                            "\n&7Serwer docelowy: &a" +
                             sessionConnect.getHost() + ":" + sessionConnect.getPort() + "\n " +
                             "&7Liczba twoich botow: &a" + bots.size() + "\n&7Lista aktywnych proxy: &a" +
                             ProxyManager.proxies.size() + "&8/&c" + ProxyManager.allproxies +
-                            "\n\n&7Zakup dostep do proxy na skype:" +
-                            " &ayooniksyooniks@gmail.com"))));
+                            "\n\n&7Darmowa wersja proxy &awww.github.com/yooniks/CasualProxy"))));
         } else if (sessionConnect == null || getLastPacket().toLowerCase().contains("rozlaczono")) {
             session.send(new ServerPlayerListDataPacket(
                     new TextMessage(ChatUtilities.fixColor("&2Casual&aProxy &7created by &ayooniks\n")),
-                    new TextMessage(ChatUtilities.fixColor("\n&7Ostatni pakiet z serwera &8(&70ms temu&8):\n&8( &cRozlaczono &8)\n&7Twoj nick: &a" + nick + "\n&7Serwer docelowy: &a" +
-                            "brak" + "\n " +
+                    new TextMessage(ChatUtilities.fixColor("\n&7Ostatni pakiet z serwera &8(&70ms temu&8):\n&8( &cRozlaczono &8)" +
+                            "\n&7Twoj nick: &a" + nick + "" +
+                            "\n&7Waznosc konta: &a" + DateUtilities.getDate(getExpirationDate()) + "\n&7Serwer docelowy: &abrak" + "\n " +
                             "&7Liczba twoich botow: &a" + bots.size() + "\n&7Lista aktywnych proxy: &a" +
                             ProxyManager.proxies.size() + "&8/&c" + ProxyManager.allproxies +
-                            "\n\n&7Zakup dostep do proxy na skype:" +
-                            " &ayooniksyooniks@gmail.com"))));
+                            "\n\n&7Darmowa wersja proxy &awww.github.com/yooniks/CasualProxy"))));
         }
     }
 
-    public void updateLag() {
+    public void updateServerMS() {
         if (sessionConnect != null && System.currentTimeMillis() - getLastPacketMs() > 1050L
                 && System.currentTimeMillis() - getLastPacketMs() < 1000000L) {
             session.send(new ServerTitlePacket("", false));

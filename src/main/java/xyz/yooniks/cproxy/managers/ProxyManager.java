@@ -19,19 +19,19 @@ public class ProxyManager {
 
     private static int proxyIterator;
 
-    public static void loadProxies(final boolean broadcast) {
+    public static void loadProxies(final boolean broadcast, int maxConnectTime) {
         new Thread() {
             @Override
             public void run() {
                 Scanner sc = null;
                 try {
                     sc = new Scanner(new File("CasualProxy", "socks.txt"));
-                } catch (FileNotFoundException e3) {
+                } catch (FileNotFoundException ex1) {
                     System.out.println("Could not find proxy file, creating..");
                     try {
                         new File("CasualProxy", "socks.txt").createNewFile();
-                    } catch (IOException e2) {
-                        e2.printStackTrace();
+                    } catch (IOException ex2) {
+                        ex2.printStackTrace();
                     }
                 }
                 if (sc == null) {
@@ -56,7 +56,8 @@ public class ProxyManager {
                                     connectTime = System.currentTimeMillis() - connectTime;
                                     final xyz.yooniks.cproxy.objects.Proxy proxyObj =
                                             new xyz.yooniks.cproxy.objects.Proxy(proxy, true, connectTime);
-                                    ProxyManager.proxies.add(proxyObj);
+                                    if (connectTime <= maxConnectTime)
+                                        ProxyManager.proxies.add(proxyObj);
                                     if (broadcast)
                                         ChatUtilities.broadcast(
                                                 "&8[&2Proxy&aManager&8] &aKolejne proxy socks zaladowane i gotowe do uzywania," +

@@ -5,6 +5,7 @@ import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.data.game.Position;
 import org.spacehq.mc.protocol.data.game.values.ClientRequest;
+import org.spacehq.mc.protocol.data.game.values.HandshakeIntent;
 import org.spacehq.mc.protocol.data.game.values.MessageType;
 import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
 import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
@@ -13,6 +14,7 @@ import org.spacehq.mc.protocol.data.game.values.world.WorldType;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoHandler;
 import org.spacehq.mc.protocol.data.status.handler.ServerPingTimeHandler;
+import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientRequestPacket;
@@ -33,49 +35,25 @@ import org.spacehq.packetlib.tcp.TcpSessionFactory;
 import xyz.yooniks.cproxy.command.Command;
 import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.managers.PlayerManager;
-import xyz.yooniks.cproxy.managers.ProxyManager;
 import xyz.yooniks.cproxy.objects.Bot;
 import xyz.yooniks.cproxy.objects.Player;
 import xyz.yooniks.cproxy.resolvers.SRVResolver;
 import xyz.yooniks.cproxy.utils.ChatUtilities;
-import xyz.yooniks.cproxy.utils.PacketUtil;
 
-import java.net.InetSocketAddress;
+import java.net.Proxy;
 
-public class ConnectCommand extends Command {
+public class TestObejscieCommand extends Command {
 
-    public ConnectCommand() {
-        super("connect", "Dolacz na serwer!", ",connect [serwer:port] [nick] [proxy/none/random] [ping] [srvresolver, true/false]", Group.GRACZ, "join", "polacz");
+    public TestObejscieCommand() {
+        super("obejscie", "Dolacz na serwer z blazingpackiem!", ",obejscie", Group.GRACZ, "testobejscie");
     }
 
     @Override
     public void onCommand(Player p, Command command, String[] args) {
-        if (args.length == 0 || args.length < 6 || !args[1].contains(":")) {
-            p.sendMessage("$p &7Poprawne uzycie: &a" + getUsage());
-            return;
-        } else {
-            final String host = args[1].split(":")[0];
-            // final Integer port = Integer.parseInt(args[1].split(":")[1]);
-            final String nick = args[2];
-            final Boolean resolver = Boolean.parseBoolean(args[5]);
-            final java.net.Proxy proxy;
-            if (args[3].contains(":")) {
-                proxy = new java.net.Proxy(java.net.Proxy.Type.SOCKS,
-                        new InetSocketAddress(args[3].split(":")[0],
-                                Integer.valueOf(args[3].split(":")[1])));
-                p.sendMessage("$p &7Ip proxy: &aspecified&7 &8(&7" + proxy.address().toString().split(":")[0] + ":"
-                        + proxy.address().toString().split(":")[1] + "&8)");
-            } else if (args[3].contains("random") || args[3].contains("top")) {
-                proxy = ProxyManager.getRandomProxy();
-                p.sendMessage("$p &7Ip proxy: &arandom&7 &8(&7" + proxy.address().toString().split(":")[0] + ":"
-                        + proxy.address().toString().split(":")[1] + "&8)");
-            } else {
-                p.sendMessage("$p &7Ip proxy: &anull &8(&70:0&8)");
-                proxy = java.net.Proxy.NO_PROXY;
-            }
-            final Boolean ping = Boolean.parseBoolean(args[4]);
-            connect(p, p.getSession(), host, nick, ping, proxy, args[1], resolver);
-        }
+        final String host = "mc4u.pl";
+        final Integer port = 25565;
+        p.sendMessage("&8>> &7Proba laczenia do: &amc4u.pl&7 z obejscia..");
+        connect(p, p.getSession(), host, "tojestTestx9", true, Proxy.NO_PROXY, "mc4u.pl:25565", false);
     }
 
     private void connect(final Player owner, final Session session, String ip, final String nick, final boolean ping, java.net.Proxy proxy, String argIp, final boolean resolver) {
@@ -140,46 +118,8 @@ public class ConnectCommand extends Command {
                     public void disconnected(final DisconnectedEvent event) {
                         event.getCause().printStackTrace();
                         final GameProfile profile2 = event.getSession().getFlag("profile");
-                        if (event.getCause() != null) {
-                            if (event.getReason().toLowerCase().contains("bot") || event.getReason().toLowerCase().contains("antybot")
-                                    || event.getReason().toLowerCase().contains("wejdz")) {
-                                p.sendMessage("$p &c[AntyBot] &cBot &7" + profile2.getName() + " " +
-                                        "&czostal rozlaczony! &8(&cPowod: &7" + event.getReason() + "&c, cause: &7"
-                                        + event.getCause().getMessage() + "&8)");
-                                if (p.playerOptions.autoReconnect) {
-                                    p.sendMessage("$p &aAutoReconnecting.. time: " + p.playerOptions.autoReconnectTime);
-                                    try {
-                                        Thread.sleep(1000L * p.playerOptions.autoReconnectTime);
-                                    } catch (InterruptedException e) {
-
-                                    }
-                                    connect(owner, session, ip, nick, ping, proxy, argIp, resolver);
-                                }
-                            } else {
-                                p.sendMessage("$p &cBot &7" + profile2.getName() + " " +
-                                        "&czostal rozlaczony! &8(&cPowod: &7" + event.getReason() + "&c, cause: &7"
-                                        + event.getCause().getMessage() + "&8)");
-                            }
-                        } else {
-                            if (event.getReason().toLowerCase().contains("bot") || event.getReason().toLowerCase().contains("antybot")
-                                    || event.getReason().toLowerCase().contains("wejdz")) {
-                                p.sendMessage("$p &c[AntyBot] &cBot &7" + profile2.getName() + " " +
-                                        "&czostal rozlaczony! &8(&cPowod: &7" + event.getReason() + "&c, cause: &7"
-                                        + event.getCause().getMessage() + "&8)");
-                                if (p.playerOptions.autoReconnect) {
-                                    p.sendMessage("$p &aAutoReconnecting.. time: " + p.playerOptions.autoReconnectTime);
-                                    try {
-                                        Thread.sleep(1000L * p.playerOptions.autoReconnectTime);
-                                    } catch (InterruptedException e) {
-
-                                    }
-                                    connect(owner, session, ip, nick, ping, proxy, argIp, resolver);
-                                }
-                            } else {
-                                p.sendMessage("$p &cBot &7" + profile2.getName() + " " +
-                                        "&czostal rozlaczony! &8(&cPowod: &7" + event.getReason() + "&c, cause: &7none&8)");
-                            }
-                        }
+                        p.sendMessage("$p &cBot &7" + profile2.getName() + " " +
+                                "&czostal rozlaczony! &8(&cPowod: &7" + event.getReason() + "&8)");
                         if (p.getSessionConnect() != null) {
                             final GameProfile profilex = p.getSessionConnect().getFlag("profile");
                             if (profile2.getName().equals(profilex.getName())) {
@@ -191,22 +131,6 @@ public class ConnectCommand extends Command {
                                 p.setLastPacketMs(0L);
                                 p.setConnected(false);
                                 p.setLastPacket("&cRozlaczono");
-                                //to chyba wywalic pozniej jak cos bedzie sie bugowac xd
-                                if (event.getReason().toLowerCase().contains("bot") || event.getReason().toLowerCase().contains("antybot")
-                                        || event.getReason().toLowerCase().contains("wejdz")) {
-                                    p.sendMessage("$p &c[AntyBot] &cBot &7" + profile2.getName() + " " +
-                                            "&czostal rozlaczony! &8(&cPowod: &7" + event.getReason() + "&c, cause: &7"
-                                            + event.getCause().getMessage() + "&8)");
-                                    if (p.playerOptions.autoReconnect) {
-                                        p.sendMessage("$p &aAutoReconnecting.. time: " + p.playerOptions.autoReconnectTime);
-                                        try {
-                                            Thread.sleep(1000L * p.playerOptions.autoReconnectTime);
-                                        } catch (InterruptedException e) {
-
-                                        }
-                                        connect(owner, session, ip, nick, ping, proxy, argIp, resolver);
-                                    }
-                                }
                             } else {
                                 session.send(new ServerChatPacket(ChatUtilities.fixColor("&cBot " +
                                         profile2.getName() + " has been just disconnected from: &7" + event.getSession().getHost() +
@@ -218,20 +142,7 @@ public class ConnectCommand extends Command {
                                     "" + event.getSession().getHost() + " &8(" + event.getSession().getPort() + ")"),
                                     MessageType.NOTIFICATION));
                         }
-                        /*if (event.getReason().contains("timed out") || event.getCause().getMessage().contains("timed out")) {
-                            ChatUtil.sendMessage(session, "&8[&6DarkProxy&8] &a'Connection timed out.' &cSerwer moze byc wylaczony lub: &cmasz &cslabe &csocks &cproxy! &cZnajdz sobie dobre&c socks&c &cpr&coxy &cna: &6gatherproxy.com");
-                            ChatUtil.sendMessage(session, "$p &cPrzy okazji zwieksz sobie &ctimeout uzywajac &6!connecttimeout &6[liczba, def&6ault;1, polecane &6do socks: 5]");
-                        }*/
                         event.getSession().getPacketProtocol().clearPackets();
-                        /*if (u.userOptions.autoReconnect.mode) {
-                            if (u.userOptions.autoReconnect.time != 0) {
-                                try {
-                                    Thread.sleep(1000L * u.userOptions.autoReconnect.time);
-                                }
-                                catch (Throwable t) {}
-                            }
-                            ProxyConnect.connect(session, null, host, port, proxy, nick, top, hostToPing, ping);
-                        }*/
                     }
 
                     @Override
@@ -244,6 +155,7 @@ public class ConnectCommand extends Command {
 
                     @Override
                     public void connected(final ConnectedEvent connectedEvent) {
+
                     }
 
                     @Override
@@ -251,7 +163,6 @@ public class ConnectCommand extends Command {
                         if (event.getPacket() instanceof ServerDisconnectPacket) {
                             final GameProfile profile2 = event.getSession().getFlag("profile");
                             final String reason = ((ServerDisconnectPacket) event.getPacket()).getReason().toString();
-                            System.out.println(reason);
                             p.sendMessage("$p &cBot &7" + profile2.getName() + " &czostal rozlaczony!" +
                                     " &8(&cPowod: &7" + reason + "&8)");
                             if (p.getSessionConnect() != null) {
@@ -264,56 +175,14 @@ public class ConnectCommand extends Command {
                                     p.setLastPacketMs(0L);
                                     p.setConnected(false);
                                     p.setLastPacket("&cRozlaczono");
-                                    if (((ServerDisconnectPacket) event.getPacket()).getReason()
-                                            .getText().toLowerCase().contains("bot") ||
-                                            ((ServerDisconnectPacket) event.getPacket()).getReason()
-                                                    .getText().toLowerCase().contains("antybot")
-                                            || ((ServerDisconnectPacket) event.getPacket()).getReason()
-                                            .getText().toLowerCase().contains("wejdz")) {
-                                        p.sendMessage("$p &c[AntyBot] &cBot &7" + profile2.getName() + " " +
-                                                "&czostal rozlaczony! &8(&cPowod: &7" + ((ServerDisconnectPacket) event.getPacket()).getReason()
-                                                .getText() + "&8)");
-                                        if (p.playerOptions.autoReconnect) {
-                                            p.sendMessage("$p &aAutoReconnecting.. Time: " + p.playerOptions.autoReconnectTime);
-                                            try {
-                                                Thread.sleep(1000L * p.playerOptions.autoReconnectTime);
-                                            } catch (InterruptedException e) {
-
-                                            }
-                                            connect(owner, session, ip, nick, ping, proxy, argIp, resolver);
-                                        }
-                                    }
                                 }
                             }
                         }
                         if (event.getPacket() instanceof LoginDisconnectPacket) {
                             final LoginDisconnectPacket packet = event.getPacket();
                             final GameProfile profile3 = event.getSession().getFlag("profile");
-
-                            if (packet.getReason()
-                                    .getText().toLowerCase().contains("bot") ||
-                                    packet.getReason()
-                                            .getText().toLowerCase().contains("antybot")
-                                    || packet.getReason()
-                                    .getText().toLowerCase().contains("wejdz")) {
-                                p.sendMessage("$p &c[AntyBot] &cBot &7" + profile3.getName() + " " +
-                                        "&czostal rozlaczony! &8(&cPowod: &7" + packet.getReason()
-                                        .getText() + "&8)");
-                                if (p.playerOptions.autoReconnect) {
-                                    p.sendMessage("$p &aAutoReconnecting.. Time: " + p.playerOptions.autoReconnectTime);
-                                    if (p.playerOptions.autoReconnectTime > 0) {
-                                        try {
-                                            Thread.sleep(1000L * p.playerOptions.autoReconnectTime);
-                                        } catch (InterruptedException e) {
-
-                                        }
-                                    }
-                                    connect(owner, session, ip, nick, ping, proxy, argIp, resolver);
-                                }
-                            } else {
-                                p.sendMessage("$p &cBot &7" + profile3.getName() + " &czostal rozlaczony podczas laczenia!" +
-                                        " &8(&cPowod: &7" + packet.getReason() + "&8)");
-                            }
+                            p.sendMessage("$p &cBot &7" + profile3.getName() + " &czostal rozlaczony podczas laczenia!" +
+                                    " &8(&cPowod: &7" + packet.getReason() + "&8)");
                         }
                         final String ll = event.getPacket().toString();
                         if (ll.toLowerCase().contains("server")) {
@@ -328,7 +197,6 @@ public class ConnectCommand extends Command {
                             return;
                         }
                         if (event.getPacket() instanceof ServerJoinGamePacket) {
-                            PacketUtil.sendJoinPayload(event.getSession());
                             session.send(new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 1,
                                     Difficulty.PEACEFUL, 10, WorldType.DEFAULT_1_1, false));
                             session.send(new ServerPlayerPositionRotationPacket(0.0, 90.0, 0.0, 90.0f, 90.0f));
@@ -407,21 +275,15 @@ public class ConnectCommand extends Command {
                                 }
                             }
                         } else if (event.getPacket() instanceof ServerPluginMessagePacket) {
-                            final ServerPluginMessagePacket packet = event.getPacket();
-                            if (packet.getChannel().equals("MC|Brand")) {
-                                p.sendMessage("$p &7Silnik serwera: &a" + new String(packet.getData()));
+                            final ServerPluginMessagePacket p4 = event.getPacket();
+                            if (p4.getChannel().equals("MC|Brand")) {
+                                p.sendMessage("$p &7Silnik serwera: &a" + new String(p4.getData()));
                             }
                         } else if (event.getPacket() instanceof ServerKeepAlivePacket) {
-                            event.getSession().send(new ClientKeepAlivePacket(((ServerKeepAlivePacket)
-                                    event.getPacket()).getPingId()));
+                            event.getSession().send(new ClientKeepAlivePacket(((ServerKeepAlivePacket) event.getPacket()).getPingId()));
                         }
-                        if (!(event.getPacket() instanceof ServerUpdateTimePacket) &&
-                                !event.getPacket().toString().toLowerCase().contains("dis")) {
-                            if (event.getPacket() instanceof ServerChatPacket ||
-                                    event.getPacket() instanceof ServerPlayerListDataPacket ||
-                                    event.getPacket() instanceof ServerTeamPacket ||
-                                    event.getPacket() instanceof ServerEntityStatusPacket ||
-                                    event.getPacket() instanceof ServerUpdateTileEntityPacket) {
+                        if (!(event.getPacket() instanceof ServerUpdateTimePacket) && !event.getPacket().toString().toLowerCase().contains("dis")) {
+                            if (event.getPacket() instanceof ServerChatPacket || event.getPacket() instanceof ServerPlayerListDataPacket || event.getPacket() instanceof ServerTeamPacket || event.getPacket() instanceof ServerEntityStatusPacket || event.getPacket() instanceof ServerUpdateTileEntityPacket) {
                                 return;
                             }
                             if (event.getPacket() instanceof ServerPlayerListEntryPacket) {
@@ -446,6 +308,7 @@ public class ConnectCommand extends Command {
                             }
                             return;
                         }
+
                         if (event.getPacket() instanceof ServerKeepAlivePacket) {
                             event.getSession().send(new ClientKeepAlivePacket(((ServerKeepAlivePacket)
                                     event.getPacket()).getPingId()));
@@ -524,6 +387,8 @@ public class ConnectCommand extends Command {
                     }
                 });
                 c.getSession().connect();
+                c.getSession().send(new HandshakePacket(48, host, port, HandshakeIntent.STATUS));
+                c.getSession().send(new HandshakePacket(48, host, port, HandshakeIntent.LOGIN));
             }
         }).start();
     }

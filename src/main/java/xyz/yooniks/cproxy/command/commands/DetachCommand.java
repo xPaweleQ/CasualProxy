@@ -2,7 +2,7 @@ package xyz.yooniks.cproxy.command.commands;
 
 import org.spacehq.mc.auth.data.GameProfile;
 import xyz.yooniks.cproxy.command.Command;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.objects.Bot;
 import xyz.yooniks.cproxy.objects.Player;
 

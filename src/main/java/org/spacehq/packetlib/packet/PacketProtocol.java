@@ -18,8 +18,8 @@ public abstract class PacketProtocol
     private final Map<Class<? extends Packet>, Integer> outgoing;
     
     public PacketProtocol() {
-        this.incoming = new HashMap<Integer, Class<? extends Packet>>();
-        this.outgoing = new HashMap<Class<? extends Packet>, Integer>();
+        this.incoming = new HashMap<>();
+        this.outgoing = new HashMap<>();
     }
     
     public abstract String getSRVRecordPrefix();
@@ -67,7 +67,7 @@ public abstract class PacketProtocol
             if (!constructor.isAccessible()) {
                 constructor.setAccessible(true);
             }
-            return (Packet)constructor.newInstance(new Object[0]);
+            return constructor.newInstance(new Object[0]);
         }
         catch (NoSuchMethodError e2) {
             throw new IllegalStateException("Packet \"" + id + ", " + packet.getName() + "\" does not have a no-params constructor for instantiation.");

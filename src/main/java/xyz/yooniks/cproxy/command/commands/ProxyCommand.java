@@ -1,7 +1,7 @@
 package xyz.yooniks.cproxy.command.commands;
 
 import xyz.yooniks.cproxy.command.Command;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.managers.ProxyManager;
 import xyz.yooniks.cproxy.objects.Player;
 
@@ -87,7 +87,7 @@ public class ProxyCommand extends Command {
                 }
                 p.sendMessage("$p &aLaduje od nowa proxy.. Broadcast: true");
                 ProxyManager.proxies.clear();
-                ProxyManager.loadProxies(true);
+                ProxyManager.loadProxies(true, 400);
             }
         }
     }

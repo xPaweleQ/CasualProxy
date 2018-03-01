@@ -1,4 +1,4 @@
-package xyz.yooniks.cproxy.enums;
+package xyz.yooniks.cproxy;
 
 public enum Group {
 

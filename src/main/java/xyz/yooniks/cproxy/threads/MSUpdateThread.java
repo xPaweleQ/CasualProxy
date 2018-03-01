@@ -5,7 +5,7 @@ import xyz.yooniks.cproxy.CasualProxy;
 import xyz.yooniks.cproxy.managers.PlayerManager;
 import xyz.yooniks.cproxy.objects.Player;
 
-public class TabThread extends Thread {
+public class MSUpdateThread extends Thread {
 
     @Override
     public void run() {
@@ -14,9 +14,9 @@ public class TabThread extends Thread {
             for (Session session : CasualProxy.getPlayers()) {
                 if (!session.isConnected()) continue;
                 final Player p = PlayerManager.getPlayer(session);
-                p.updateTab();
+                p.updateServerMS();
                 try {
-                    Thread.sleep(20L);
+                    Thread.sleep(1000L);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

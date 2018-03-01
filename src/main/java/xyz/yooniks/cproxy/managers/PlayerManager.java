@@ -2,7 +2,7 @@ package xyz.yooniks.cproxy.managers;
 
 import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.packetlib.Session;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.objects.Player;
 
 import java.util.HashMap;

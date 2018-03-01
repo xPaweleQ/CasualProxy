@@ -630,8 +630,8 @@ public class MagicValues
         register(GenericSound.SMALL_FALL, "game.neutral.hurt.fall.small");
         register(GenericSound.MOB_SWIM, "game.hostile.swim");
         register(GenericSound.MOB_SPLASH, "game.hostile.swim.splash");
-        register(GenericSound.PLAYER_SWIM, "game.player.swim");
-        register(GenericSound.PLAYER_SPLASH, "game.player.swim.splash");
+        register(GenericSound.PLAYER_SWIM, "game.runnables.swim");
+        register(GenericSound.PLAYER_SPLASH, "game.runnables.swim.splash");
         register(GenericSound.ENDER_DRAGON_GROWL, "mob.enderdragon.growl");
         register(GenericSound.WITHER_IDLE, "mob.wither.idle");
         register(GenericSound.BLAZE_BREATHE, "mob.blaze.breathe");
@@ -664,8 +664,8 @@ public class MagicValues
         register(GenericSound.WOLF_BARK, "mob.wolf.bark");
         register(GenericSound.MOB_BIG_FALL, "game.hostile.hurt.fall.big");
         register(GenericSound.MOB_SMALL_FALL, "game.hostile.hurt.fall.small");
-        register(GenericSound.PLAYER_BIG_FALL, "game.player.hurt.fall.big");
-        register(GenericSound.PLAYER_SMALL_FALL, "game.player.hurt.fall.small");
+        register(GenericSound.PLAYER_BIG_FALL, "game.runnables.hurt.fall.big");
+        register(GenericSound.PLAYER_SMALL_FALL, "game.runnables.hurt.fall.small");
         register(GenericSound.ENDER_DRAGON_HURT, "mob.enderdragon.hit");
         register(GenericSound.WITHER_HURT, "mob.wither.hurt");
         register(GenericSound.WITHER_DEATH, "mob.wither.death");
@@ -694,8 +694,8 @@ public class MagicValues
         register(GenericSound.WITCH_DEATH, "mob.witch.death");
         register(GenericSound.ZOMBIE_HURT, "mob.zombie.hurt");
         register(GenericSound.ZOMBIE_DEATH, "mob.zombie.death");
-        register(GenericSound.PLAYER_HURT, "game.player.hurt");
-        register(GenericSound.PLAYER_DEATH, "game.player.die");
+        register(GenericSound.PLAYER_HURT, "game.runnables.hurt");
+        register(GenericSound.PLAYER_DEATH, "game.runnables.die");
         register(GenericSound.WOLF_HURT, "mob.wolf.hurt");
         register(GenericSound.WOLF_DEATH, "mob.wolf.death");
         register(GenericSound.VILLAGER_HURT, "mob.villager.hit");

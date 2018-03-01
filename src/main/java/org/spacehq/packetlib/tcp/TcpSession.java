@@ -361,6 +361,8 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         }
         else {
             message = "Internal network exception.";
+            //System.out.println(cause.getMessage()+", returning and ignoring..");
+            return; //dodatek do 'fixa libki'
         }
         this.disconnect(message, cause);
     }

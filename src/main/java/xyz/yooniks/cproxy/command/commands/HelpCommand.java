@@ -2,7 +2,7 @@ package xyz.yooniks.cproxy.command.commands;
 
 import xyz.yooniks.cproxy.command.Command;
 import xyz.yooniks.cproxy.command.CommandManager;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.objects.Player;
 
 public class HelpCommand extends Command {

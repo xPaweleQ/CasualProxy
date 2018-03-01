@@ -11,7 +11,7 @@ import org.spacehq.mc.protocol.packet.ingame.client.window.ClientWindowActionPac
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.session.*;
 import org.spacehq.packetlib.packet.Packet;
-import xyz.yooniks.cproxy.enums.MacroType;
+import xyz.yooniks.cproxy.types.MacroType;
 import xyz.yooniks.cproxy.managers.MacroManager;
 
 import java.util.Arrays;

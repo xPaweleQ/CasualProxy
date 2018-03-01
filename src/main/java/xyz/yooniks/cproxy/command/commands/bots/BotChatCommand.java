@@ -2,7 +2,7 @@ package xyz.yooniks.cproxy.command.commands.bots;
 
 import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
 import xyz.yooniks.cproxy.command.Command;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.objects.Bot;
 import xyz.yooniks.cproxy.objects.Player;
 

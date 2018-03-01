@@ -1,23 +1,18 @@
 package xyz.yooniks.cproxy;
 
-import xyz.yooniks.cproxy.exceptions.InvalidLicenseReturnException;
 import xyz.yooniks.cproxy.managers.ProxyManager;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class Proxy extends JFrame {
+public class Proxy {/*extends JFrame {*/
 
-    private JPanel panel;
+    //private JPanel panel;
 
     public Proxy() {
-        super("CasualProxy created by yooniks");
+        /*super("CasualProxy created by yooniks");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setLocation(50, 50);
@@ -28,7 +23,7 @@ public class Proxy extends JFrame {
         this.panel = new JPanel();
         setContentPane(panel);
 
-        final JLabel label = new JLabel("Wejdz w mc na serwer: '127.0.0.1:25565'");
+        final JLabel label = new JLabel("Wejdz w mc na serwer: '127.0.0.1:1337'");
         label.setBounds(250, 150, 50, 25);
         label.setSize(50, 25);
         add(label);
@@ -39,31 +34,32 @@ public class Proxy extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
+                System.exit(1);
             }
         });
         menu.add(menuItem);
         menuBar.add(menu);
-        setJMenuBar(menuBar);
+        setJMenuBar(menuBar);*/
 
         try {
             checkWWW();
-        } catch (InvalidLicenseReturnException ex) {
+        } catch (Exception ex) {
             System.exit(1);
             return;
         }
 
-        ProxyManager.loadProxies(false);
+        ProxyManager.loadProxies(false, 400);
     }
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            new Proxy().setVisible(true);
-        });
+        //EventQueue.invokeLater(() -> {
+        new Proxy();/*.setVisible(true);*/
+        //});
         final CasualProxy proxy = new CasualProxy();
         proxy.onLoad();
     }
 
-    private void checkWWW() throws InvalidLicenseReturnException {
+    private void checkWWW() throws RuntimeException {
         try {
             URL oracle = new URL("https://raw.githubusercontent.com/yooniks/proxy_license/master/license.txt");
             URLConnection yc = oracle.openConnection();
@@ -80,14 +76,12 @@ public class Proxy extends JFrame {
                                     "\n\n" +
                                     "#########################");
                 } else {
-                    dispose();
-                    throw new InvalidLicenseReturnException("Wykryto blad podczas ladowania licencji, proxy zostaje wylaczone, jezeli chcesz uzyskac ponowny dostep zglos sie do wlasciciela proxy, czyli yooniksa, kontakt skype: yooniksyooniks@gmail.com, znajdziesz mnie takze na forum, np: skript.pl");
+                    throw new RuntimeException("Niepoprawna licencja, zglos sie na skype: yooniksyooniks@gmail.com");
                 }
             }
             in.close();
         } catch (Throwable ex) {
-            dispose();
-            throw new InvalidLicenseReturnException("Wykryto blad podczas ladowania licencji (lub nie masz internetu), proxy zostaje wylaczone, jezeli chcesz uzyskac ponowny dostep zglos sie do wlasciciela proxy, czyli yooniksa, kontakt skype: yooniksyooniks@gmail.com, znajdziesz mnie takze na forum, np: skript.pl");
+            throw new RuntimeException("Niepoprawna licencja, zglos sie na skype: yooniksyooniks@gmail.com");
         }
     }
 }

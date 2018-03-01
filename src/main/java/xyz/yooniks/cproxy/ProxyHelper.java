@@ -5,7 +5,6 @@ import org.apache.commons.configuration.XMLConfiguration;
 import xyz.yooniks.cproxy.command.commands.*;
 import xyz.yooniks.cproxy.command.commands.bots.*;
 import xyz.yooniks.cproxy.command.commands.settings.*;
-import xyz.yooniks.cproxy.enums.Group;
 import xyz.yooniks.cproxy.managers.PlayerManager;
 import xyz.yooniks.cproxy.objects.Player;
 import xyz.yooniks.cproxy.utils.DateUtilities;
@@ -98,6 +97,7 @@ public abstract class ProxyHelper {
         new AutoLoginCommand();
         new MessagesBotCommand();
         new ProxyCommand();
+        new RespawnCommand();
         //new TestObejscieCommand();
     }
 

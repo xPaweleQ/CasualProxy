@@ -28,13 +28,10 @@ import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerSwitchCameraPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerTitlePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerChangeHeldItemPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerPlayerAbilitiesPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerSpawnPositionPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerWorldBorderPacket;
-import org.spacehq.mc.protocol.packet.status.client.StatusPingPacket;
 import org.spacehq.packetlib.Server;
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.server.ServerAdapter;
@@ -44,12 +41,11 @@ import org.spacehq.packetlib.event.session.*;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
 import xyz.yooniks.cproxy.command.Command;
 import xyz.yooniks.cproxy.command.CommandManager;
-import xyz.yooniks.cproxy.interfaces.Loader;
 import xyz.yooniks.cproxy.managers.PlayerManager;
 import xyz.yooniks.cproxy.managers.ProxyManager;
 import xyz.yooniks.cproxy.objects.Bot;
 import xyz.yooniks.cproxy.objects.Player;
-import xyz.yooniks.cproxy.threads.LagThread;
+import xyz.yooniks.cproxy.threads.MSUpdateThread;
 import xyz.yooniks.cproxy.threads.TabThread;
 import xyz.yooniks.cproxy.utils.ChatUtilities;
 import xyz.yooniks.cproxy.utils.DateUtilities;
@@ -70,17 +66,15 @@ public class CasualProxy extends ProxyHelper implements Loader {
         return players;
     }
 
-    public static List<String> getAccessPlayers() {
-        return accessPlayers;
-    }
-
     public static void addAccess(String player) {
         accessPlayers.add(player);
     }
 
     @Override
     public void onLoad() {
+        final long msStart = System.currentTimeMillis();
         getLogger().info("Loading proxy..");
+        init();
         loadConfig();
         loadCommands();
 
@@ -96,7 +90,10 @@ public class CasualProxy extends ProxyHelper implements Loader {
                 if (!accessPlayers.contains(profile.getName())) {
                     session.disconnect(ChatUtilities
                             .fixColor("$p &7" + profile.getName() + ", " +
-                                    "&cnie posiadasz dostepu do tego serwera.\nZakup dostep na skype: &ayooniksyooniks@gmail.com" + "\n\n&7@edit, dodaj siebie w CasualProxy/settings.xml, zmien unsafe_cash na swoj nick, jezeli ten plik nie istnieje to go pobierz i zedytuj: www.github.com/yooniks/CasualProxy/CasualProxy/settings.xml"));
+                                    "&cnie posiadasz dostepu do tego serwera.\nZakup dostep na skype: &ayooniksyooniks@gmail.com"
+                                    + "\n\n&7@edit, dodaj siebie w CasualProxy/settings.xml, zmien unsafe_cash na swoj nick," +
+                                    " jezeli ten plik nie istnieje to go pobierz i zedytuj: " +
+                                    "www.github.com/yooniks/CasualProxy/CasualProxy/settings.xml"));
                     return;
                 }
                 final Player p = PlayerManager.getPlayer(session);
@@ -121,22 +118,12 @@ public class CasualProxy extends ProxyHelper implements Loader {
                         WorldType.FLAT, false));
                 session.send(new ServerSpawnPositionPacket(new Position(
                         0, 1337, 0)));
-                session.send(new ServerPlayerAbilitiesPacket(false, false, false, false, 0.1f, 0.1f));
-                session.send(new ServerChangeHeldItemPacket(0));
-                session.send(new ServerUpdateTimePacket(1, 0L));
-                session.send(new ServerPlayerPositionRotationPacket(0, 1337, 0, 0.0F, 0.0F));
+
                 session.send(new ServerWorldBorderPacket(15));
-                /*for (final Player p : StaticMC.this.world.getPlayers()) {
-                    session.send(new ServerEntityPositionRotationPacket(p.getId(), 0.0, 0.0, 0.0, (float)p.yaw, (float)p.pitch, p.isOnGround));
-                    final User uP = UserManager.getUser(p.profile.getName());
-                    final ServerPlayerListEntryPacket packetek = new ServerPlayerListEntryPacket(
-                            PlayerListEntryAction.ADD_PLAYER, (PlayerListEntry[])Arrays.asList(
-                                    new PlayerListEntry(new GameProfile(UUID.randomUUID(),
-                                            ChatUtil.fixColor("&9" + p.profile.getName())),
-                                            GameMode.SURVIVAL, 0, new TextMessage(ChatUtil.fixColor(uP.getRankType().prefix + uP.getNick() + "  ")))).toArray());
-                    session.send(packetek);
-                    session.send(p.getSpawnPacket());
-                }*/
+
+                session.send(new ServerPlayerAbilitiesPacket(false, false, false, false, 0.1f, 0.1f));
+                session.send(new ServerPlayerPositionRotationPacket(0, 1337, 0, 0.0F, 0.0F));
+
                 p.setSession(session);
                 p.setConnected(false);
                 p.setLogged(false);
@@ -145,13 +132,8 @@ public class CasualProxy extends ProxyHelper implements Loader {
                 p.setLastPacket("&cRozlaczono");
                 final Thread t = new TabThread();
                 t.start();
-                final Thread t2 = new LagThread();
+                final Thread t2 = new MSUpdateThread();
                 t2.start();
-                if (p == null || session == null) return;
-                /*session.send(new ServerTeamPacket("yooniks", TeamAction.ADD_PLAYER, new String[] { "yooniks" }));
-                session.send(new ServerDisplayScoreboardPacket(ScoreboardPosition.SIDEBAR, "yooniks"));
-                session.send(new ServerScoreboardObjectivePacket("yooniks", ObjectiveAction.ADD, "yooniks", ScoreType.INTEGER));
-                session.send(new ServerScoreboardObjectivePacket("yooniks", ObjectiveAction.UPDATE, "yooniks", ScoreType.INTEGER));*/
                 players.add(session);
                 p.sendMessage(String.valueOf(getChars()));
                 p.sendMessage("$p &7Zaloguj sie uzywajac: &a,login [haslo]");
@@ -190,13 +172,19 @@ public class CasualProxy extends ProxyHelper implements Loader {
         this.server.setGlobalFlag("info-builder", new ServerInfoBuilder() {
             @Override
             public ServerStatusInfo buildInfo(final Session session) {
+
                 final GameProfile[] profiles = {new GameProfile(UUID.randomUUID(),
-                        ChatUtilities.fixColor("&7Autor proxy: &ayooniks\n\n&8>> &7Lista aktywnych socks do 200ms: " +
+                        ChatUtilities.fixColor("&7Autor proxy: &ayooniks\n\n&8>> &7Lista aktywnych socks do 400ms: " +
                                 "&a" + ProxyManager.proxies.size() + "&8/&c" + ProxyManager.allproxies + " \n" +
-                                "\n&8>> &7Crasherki NBT i wiecej\n&8>> &7Bardzo szybkie boty, macro, mother, pelno ustawien do botow itd."))};
-                return new ServerStatusInfo(new VersionInfo("§2§lCasual§a§lProxy                    §7Online: §a" + players.size() + " ", 48),
+                                "\n&8>> &7Crasherki NBT i wiecej\n&8>> &7Bardzo szybkie boty, macro, mother," +
+                                " pelno ustawien do botow itd."))};
+
+                return new ServerStatusInfo(new VersionInfo("§2§lCasual§a§lProxy                 " +
+                        "   §7Online: §a" + players.size() + " ", 48),
+
                         new PlayerInfo(800, 0, profiles),
-                        new TextMessage("§2Casual§aProxy §8| §7Dostep na skype: §ayooniksyooniks@gmail.com\n      §aComing soon.."), null);
+                        new TextMessage("§2Casual§aProxy §8| §7Darmowa wersja proxy\n    " +
+                                "  §awww.youtube.com/c/Enchanted3"), null);
             }
         });
         this.server.addListener(new ServerAdapter() {
@@ -235,10 +223,7 @@ public class CasualProxy extends ProxyHelper implements Loader {
                             }
                             return;
                         }
-                        if (/*event.getPacket() instanceof ClientPlayerPositionPacket ||
-                                /*event.getPacket() instanceof ClientPlayerPositionRotationPacket ||
-                               /* event.getPacket() instanceof ClientPlayerMovementPacket ||*/
-                                event.getPacket() instanceof ClientWindowActionPacket ||
+                        if (event.getPacket() instanceof ClientWindowActionPacket ||
                                         event.getPacket() instanceof ClientSwingArmPacket ||
                                         event.getPacket() instanceof ClientPlayerPlaceBlockPacket ||
                                         event.getPacket() instanceof ClientRequestPacket ||
@@ -321,9 +306,9 @@ public class CasualProxy extends ProxyHelper implements Loader {
                                 } else if (packet.getMessage().startsWith("@")) {
                                     for (Session sessionAll : server.getSessions()) {
                                         sessionAll.send(new ServerChatPacket(
-                                                ChatUtilities.fixColor("&3&l[CHAT] "
-                                                        + p.getGroup().getPrefix() + profile.getName() + " §8» " +
-                                                        "" + p.getGroup().getSuffix() + packet.getMessage().replace(
+                                                ChatUtilities.fixColor("$p "
+                                                        + p.getGroup().getPrefix() + " " + profile.getName() + " §8» &6"
+                                                        + p.getGroup().getSuffix() + packet.getMessage().replace(
                                                         "@", ""))));
                                     }
                                 }
@@ -342,6 +327,12 @@ public class CasualProxy extends ProxyHelper implements Loader {
                         "$p &a" + p.getNick() + "&7 opuscil proxy!");
             }
         });
-        getLogger().info("Loading proxy finished!");
+        final long ms = (System.currentTimeMillis() - msStart);
+        getLogger().info("Loading proxy finished in: " + ms + "ms!");
+        System.out.println("\n\nWejdz w minecraft na serwer: " + server.getHost() + ":" + server.getPort());
+
+        while (true) {
+
+        }
     }
 }

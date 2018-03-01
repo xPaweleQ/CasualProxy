@@ -1,7 +1,7 @@
 package xyz.yooniks.cproxy.command.commands.bots;
 
 import xyz.yooniks.cproxy.command.Command;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.objects.Player;
 
 public class MotherCommand extends Command {

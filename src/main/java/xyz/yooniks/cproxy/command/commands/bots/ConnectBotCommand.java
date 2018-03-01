@@ -18,12 +18,13 @@ import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.session.*;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
 import xyz.yooniks.cproxy.command.Command;
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.managers.MacroManager;
 import xyz.yooniks.cproxy.managers.ProxyManager;
 import xyz.yooniks.cproxy.objects.Bot;
 import xyz.yooniks.cproxy.objects.Macro;
 import xyz.yooniks.cproxy.objects.Player;
+import xyz.yooniks.cproxy.utils.PacketUtil;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -88,14 +89,14 @@ public class ConnectBotCommand extends Command {
             new Thread(() -> {
                 final String nick = "CasualProxy" + rand.nextInt(1000);
                 connectBot(owner, nick, host, port, ping, msDelay, proksi, macro, i2, amount, true);
-                if (msDelay != 0) {
-                    try {
-                        Thread.sleep(msDelay);
-                    } catch (InterruptedException ex) {
-                        owner.sendMessage("$p &cDelay nieudany! &7" + ex.getMessage());
-                    }
-                }
             }).start();
+            if (msDelay != 0) {
+                try {
+                    Thread.sleep(msDelay);
+                } catch (InterruptedException ex) {
+                    owner.sendMessage("$p &cDelay nieudany! &7" + ex.getMessage());
+                }
+            }
         }
     }
 
@@ -132,6 +133,7 @@ public class ConnectBotCommand extends Command {
                 }
                 //autocaptcha
                 if (e.getPacket() instanceof ServerChatPacket) {
+                    PacketUtil.sendJoinPayload(e.getSession());
                     if (owner.botOptions.autoCaptcha) {
                         if (e.getSession().getHost().contains("proxy")) return;
                         final ServerChatPacket p3 = e.getPacket();

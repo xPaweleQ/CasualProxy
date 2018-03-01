@@ -1,4 +1,4 @@
-package xyz.yooniks.cproxy.enums;
+package xyz.yooniks.cproxy.types;
 
 public enum CrashType {
 

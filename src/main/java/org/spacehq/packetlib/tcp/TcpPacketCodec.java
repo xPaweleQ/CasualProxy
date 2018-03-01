@@ -27,8 +27,15 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet>
     
     public void encode(final ChannelHandlerContext ctx, final Packet packet, final ByteBuf buf) throws Exception {
         final NetOutput out = new ByteBufNetOutput(buf);
-        this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.session.getPacketProtocol().getOutgoingId(packet.getClass()));
+        this.session.getPacketProtocol().getPacketHeader().writePacketId(out,
+                this.session.getPacketProtocol().getOutgoingId(packet.getClass()));
+        //try {
         packet.write(out);
+        //}
+        //catch (Exception ex) {
+        //    System.out.println("Nieudane wyslanie pakietu: "+packet.getClass().getSimpleName());
+        //    return;
+        //}
     }
     
     @Override

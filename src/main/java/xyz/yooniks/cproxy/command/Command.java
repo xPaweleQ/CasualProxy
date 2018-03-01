@@ -1,6 +1,6 @@
 package xyz.yooniks.cproxy.command;
 
-import xyz.yooniks.cproxy.enums.Group;
+import xyz.yooniks.cproxy.Group;
 import xyz.yooniks.cproxy.objects.Player;
 
 public abstract class Command implements CommandExecutor {
